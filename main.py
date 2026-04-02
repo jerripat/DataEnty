@@ -207,25 +207,6 @@ def register_data():
     except sqlite3.Error as e:
         messagebox.showerror("Database Error", f"An error occurred: {e}")
 
-# def submit_data():
-#     first_name = first_name_entry.get().strip()
-#     last_name = last_name_entry.get().strip()
-#     selected_title = title_combo.get().strip()
-#     age = age_entry.get().strip()
-#     nationality = nationality_combo.get().strip()
-#     registered = registered_var.get()
-#     num_courses = num_courses_spinbox.get().strip()
-#     num_semesters = numsemesters_spinbox.get().strip()
-#     terms_agreed = terms_var.get()
-#
-#     if not first_name or not last_name or not selected_title or not age or not nationality:
-#         messagebox.showerror("Error", "Please fill in all user information fields.")
-#         return
-
-    # if not terms_agreed:
-    #     messagebox.showerror("Error", "You must agree to the terms and conditions.")
-    #     return
-
     messagebox.showinfo(
         "Success",
         f"Submitted successfully!\n\n"
