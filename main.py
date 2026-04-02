@@ -3,7 +3,7 @@ from tkinter import messagebox, ttk
 
 window = tk.Tk()
 window.title("Data Entry Form")
-window.geometry("650x500")
+window.geometry("700x500")
 
 frame = tk.Frame(window, width=500, height=300, borderwidth=3, relief="solid")
 frame.pack(padx=20, pady=20)
@@ -26,11 +26,17 @@ last_name_label.grid(row=0, column=1, padx=5, pady=5)
 last_name_entry = tk.Entry(user_info_frame)
 last_name_entry.grid(row=1, column=1, padx=5, pady=5)
 
-title_label = tk.Label(user_info_frame, text="Title:", bg="lightgray", font=("Arial", 10, "bold"))
+title_label = tk.Label(user_info_frame, text="Title:", bg="lightgray",font=("Arial", 10, "bold"))
 title_label.grid(row=0, column=2, padx=5, pady=5)
 
 title_options = ["", "Mr.", "Mrs.", "Ms."]
-title_combo = ttk.Combobox(user_info_frame, values=title_options, state="readonly")
+
+title_combo = ttk.Combobox(
+    user_info_frame,
+    values=title_options,
+    state="readonly",
+    style="WhiteReadonly.TCombobox"
+)
 title_combo.grid(row=1, column=2, padx=5, pady=5)
 title_combo.current(0)
 
@@ -48,7 +54,21 @@ nationality_options = [
     "Mexican", "Norwegian", "Russian", "Scottish", "Spanish", "Swedish",
     "Thai", "Vietnamese"
 ]
-nationality_combo = ttk.Combobox(user_info_frame, values=nationality_options, state="readonly")
+
+style = ttk.Style()
+style.map(
+    "WhiteReadonly.TCombobox",
+    fieldbackground=[("readonly", "white")],
+    background=[("readonly", "white")],
+    foreground=[("readonly", "black")]
+)
+
+nationality_combo = ttk.Combobox(
+    user_info_frame,
+    values=nationality_options,
+    state="readonly",
+    style="WhiteReadonly.TCombobox"
+)
 nationality_combo.grid(row=3, column=1, padx=5, pady=5)
 nationality_combo.current(0)
 
@@ -56,7 +76,7 @@ for widget in user_info_frame.winfo_children():
     widget.grid_configure(padx=10, pady=5)
 
 courses_frame = tk.LabelFrame(frame, text="Courses", bg="lightgray", font=("Arial", 12, "bold"))
-courses_frame.grid(row=1, column=0, sticky="news", ipadx=20, ipady=10)
+courses_frame.grid(row=1, column=0, sticky="news", padx=20, pady=10)
 
 registered_label = tk.Label(courses_frame, text="Registered Courses:", bg="lightgray", font=("Arial", 10, "bold"))
 registered_label.grid(row=0, column=0, padx=5, pady=5)
@@ -84,7 +104,7 @@ for widget in courses_frame.winfo_children():
     widget.grid_configure(padx=10, pady=5)
 
 terms_frame = tk.LabelFrame(frame, text="Terms and Conditions", bg="lightgray", font=("Arial", 12, "bold"))
-terms_frame.grid(row=2, column=0, sticky="news")
+terms_frame.grid(row=2, column=0, sticky="news",padx=20, pady=10)
 
 terms_var = tk.BooleanVar()
 terms_check = tk.Checkbutton(
