@@ -115,7 +115,10 @@ terms_check = tk.Checkbutton(
 )
 terms_check.grid(row=0, column=0, padx=5, pady=5)
 
-def submit_data():
+import sqlite3
+from tkinter import messagebox
+
+def register_data():
     first_name = first_name_entry.get().strip()
     last_name = last_name_entry.get().strip()
     selected_title = title_combo.get().strip()
@@ -126,13 +129,102 @@ def submit_data():
     num_semesters = numsemesters_spinbox.get().strip()
     terms_agreed = terms_var.get()
 
-    if not first_name or not last_name or not selected_title or not age or not nationality:
-        messagebox.showerror("Error", "Please fill in all user information fields.")
+    # Validation
+    if not first_name or not last_name:
+        messagebox.showerror("Input Error", "First name and last name are required.")
+        return
+
+    if not age.isdigit():
+        messagebox.showerror("Input Error", "Age must be a number.")
+        return
+
+    if not num_courses.isdigit():
+        messagebox.showerror("Input Error", "Number of courses must be a number.")
+        return
+
+    if not num_semesters.isdigit():
+        messagebox.showerror("Input Error", "Number of semesters must be a number.")
         return
 
     if not terms_agreed:
-        messagebox.showerror("Error", "You must agree to the terms and conditions.")
+        messagebox.showerror("Terms Error", "You must agree to the terms.")
         return
+
+    try:
+        conn = sqlite3.connect("Students.db")
+        cursor = conn.cursor()
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS students (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            first_name TEXT NOT NULL,
+            last_name TEXT NOT NULL,
+            selected_title TEXT,
+            age INTEGER,
+            nationality TEXT,
+            registered INTEGER,
+            num_courses INTEGER,
+            num_semesters INTEGER,
+            terms_agreed INTEGER
+        )
+        """)
+
+        cursor.execute("""
+        INSERT INTO students (
+            first_name, last_name, selected_title, age, nationality,
+            registered, num_courses, num_semesters, terms_agreed
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            first_name,
+            last_name,
+            selected_title,
+            int(age),
+            nationality,
+            registered,
+            int(num_courses),
+            int(num_semesters),
+            terms_agreed
+        ))
+
+        conn.commit()
+        conn.close()
+
+        messagebox.showinfo("Success", "Student data registered successfully.")
+
+        # Optional: clear form after successful insert
+        first_name_entry.delete(0, "end")
+        last_name_entry.delete(0, "end")
+        title_combo.set("")
+        age_entry.delete(0, "end")
+        nationality_combo.set("")
+        registered_var.set(0)
+        num_courses_spinbox.delete(0, "end")
+        num_courses_spinbox.insert(0, "0")
+        numsemesters_spinbox.delete(0, "end")
+        numsemesters_spinbox.insert(0, "0")
+        terms_var.set(0)
+
+    except sqlite3.Error as e:
+        messagebox.showerror("Database Error", f"An error occurred: {e}")
+
+# def submit_data():
+#     first_name = first_name_entry.get().strip()
+#     last_name = last_name_entry.get().strip()
+#     selected_title = title_combo.get().strip()
+#     age = age_entry.get().strip()
+#     nationality = nationality_combo.get().strip()
+#     registered = registered_var.get()
+#     num_courses = num_courses_spinbox.get().strip()
+#     num_semesters = numsemesters_spinbox.get().strip()
+#     terms_agreed = terms_var.get()
+#
+#     if not first_name or not last_name or not selected_title or not age or not nationality:
+#         messagebox.showerror("Error", "Please fill in all user information fields.")
+#         return
+
+    # if not terms_agreed:
+    #     messagebox.showerror("Error", "You must agree to the terms and conditions.")
+    #     return
 
     messagebox.showinfo(
         "Success",
@@ -145,7 +237,7 @@ def submit_data():
         f"Semesters: {num_semesters}"
     )
 
-button = tk.Button(frame, text="Submit", command=submit_data)
+button = tk.Button(frame, text="Submit", command=register_data)
 button.grid(row=3, column=0, padx=5, pady=10, columnspan=3)
 
 window.mainloop()
